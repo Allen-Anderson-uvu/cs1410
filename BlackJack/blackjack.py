@@ -51,12 +51,17 @@ class Player:
         print('Your new card is', newcard, 'Your new score is', player.points)
 
 class Dealer(Player):
-    def __init__(self, dealer_hand= [], hand=[], points= 0, ):
+    def __init__(self, dealer_hand= [], hand=[], points= 0, hiddenscore= 0, hiddendealerhand = []):
         super().__init__(hand=[], points= 0)
         self.dealer_hand = dealer_hand
+        self.hiddenscore = hiddenscore
+        self.hiddendealerhand = hiddendealerhand
 
     def drawdealerhand(self):
         newcard = deck.deck[0]
+        self.hiddendealerhand.append(newcard)
+        self.hiddendealerhand.append('?')
+        self.calculatehiddenpoints(newcard)
         self.calculate_points(newcard)
         self.dealer_hand.append(newcard)
         deck.deck.pop(0)
@@ -64,6 +69,14 @@ class Dealer(Player):
         self.calculate_points(newcard)
         self.dealer_hand.append(newcard)
         deck.deck.pop(0)
+    
+    def calculatehiddenpoints(self, newcard):
+        if newcard[0] in ['1', '2', '3', '4', '5','6','7', '8', '9', '10']:
+            self.hiddenscore += int(newcard[0])
+        elif newcard[0] in ['K', 'Q', 'J']:
+            self.hiddenscore += 10
+        elif newcard[0] == 'A':
+            self.hiddenscore += 11
 
     def dealerhit(self):
         newcard = deck.deck[0]
@@ -80,15 +93,13 @@ player = Player()
 def main():
     hitphase = False
 
-    if len(deck.deck) < 4:
-        print('Not enough cards to continue playing. Dealer will draw a new deck and shuffle it.')
-        newdeck = Deck()
-        newdeck.shuffle()
-
     while True:
+        if len(deck.deck) < 4:
+            print('Not enough cards to continue playing. Dealer will draw a new deck and shuffle it.')
+            break
         dealer.drawdealerhand()
         player.draw_hand()
-        print(dealer.dealer_hand, 'Dealer points: ', dealer.points)
+        print(dealer.hiddendealerhand, 'Dealer points: ', dealer.hiddenscore)
         print(player.hand, 'Your points: ', player.points)
         if player.points == 21:
             print('Black Jack! You win!')
@@ -96,11 +107,15 @@ def main():
             dealer.dealer_hand = []
             player.points = 0
             dealer.points = 0
+            dealer.hiddendealerhand = []
+            dealer.hiddenscore=0
         elif dealer.points == 21:
             player.hand = []
             dealer.dealer_hand = []
             player.points = 0
             dealer.points = 0
+            dealer.hiddendealerhand = []
+            dealer.hiddenscore=0
             print('Black Jack! Dealer wins!')
             main()
         else:
@@ -122,6 +137,10 @@ def main():
                 dealer.dealer_hand = []
                 player.points = 0
                 dealer.points = 0
+                dealer.hiddendealerhand = []
+                dealer.hiddenscore=0
+                dealer.hiddendealerhand = []
+                dealer.hiddenscore=0
                 hitphase = False
                 main()
             elif player.points > 21:
@@ -130,11 +149,18 @@ def main():
                 dealer.dealer_hand = []
                 player.points = 0
                 dealer.points = 0
+                dealer.hiddendealerhand = []
+                dealer.hiddenscore=0
                 hitphase = False
                 main()
             
         print("Dealer's turn")
+        time.sleep(1)
+        dealer.hiddendealerhand = []
+        print('Dealers cards', dealer.dealer_hand, 'Dealer points', dealer.points)
+        time.sleep(2)
         while dealer.points < 17:
+            print('Dealer hits!')
             dealer.dealerhit()
             print(dealer.points)
             time.sleep(2)
@@ -145,6 +171,7 @@ def main():
             player.hand = []
             player.points = 0
             dealer.points = 0
+            
 
         elif dealer.points > 21:
             print('Dealer busts!  You win!')
@@ -152,6 +179,8 @@ def main():
             player.hand = []
             player.points = 0
             dealer.points = 0
+            dealer.hiddendealerhand = []
+            dealer.hiddenscore=0
             
             
         elif dealer.points > player.points:
@@ -160,6 +189,8 @@ def main():
             player.hand = []
             player.points = 0
             dealer.points = 0
+            dealer.hiddendealerhand = []
+            dealer.hiddenscore=0
             
         elif player.points > dealer.points:
             print('Player wins!')
@@ -167,9 +198,13 @@ def main():
             dealer.dealer_hand = []
             player.points = 0
             dealer.points = 0
+            dealer.hiddendealerhand = []
+            dealer.hiddenscore=0
             
         elif player.points == dealer.points:
             print("It's a push!  No winner!")
+            dealer.hiddendealerhand = []
+            dealer.hiddenscore=0            
             dealer.dealer_hand = []
             player.hand = []
             player.points = 0
