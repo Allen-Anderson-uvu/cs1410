@@ -70,6 +70,7 @@ class Dealer(Player):
         self.calculate_points(newcard)
         self.dealer_hand.append(newcard)
         deck.deck.pop(0)
+        print(newcard)
 
 deck = Deck()
 deck.shuffle()
@@ -102,15 +103,12 @@ def main():
             hitphase = True
 
         while hitphase == True:
-            player.hit()
-            print(dealer.dealer_hand, 'Dealer points: ', dealer.points)
-            print(player.hand, 'Your points ', player.points)
-
             hors = input('Would you like to hit or stand? (H/S)')
             if hors == 'H':
                 player.hit()
             elif hors == 'S':
-                pass
+                print(hors)
+                break
             else:
                 print('Syntax error: improper input.  Use H or S for input.')
 
@@ -129,8 +127,11 @@ def main():
                 dealer.points = 0
                 hitphase = False
             
-        
-        print('Dealers turn!')
+        print("Dealer's turn")
+        while dealer.points < 17:
+            dealer.dealerhit()
+            print(dealer.points)
+            time.sleep(2)
             
 
 if __name__ == "__main__":
