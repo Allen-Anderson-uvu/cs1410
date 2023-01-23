@@ -44,21 +44,11 @@ class Player:
         deck.deck.pop(0)
     
     def hit(self):
-        hors = 'H'
-        while hors == 'H':
-            hors = input('Hit or Stand? (H/S)')
-            if hors == 'H':
-                newcard = deck.deck[0]
-                self.calculate_points(newcard)
-                self.hand.append(newcard)
-                deck.deck.pop(0)
-                print('Your hand is ', player.hand, 'Your score is ', player.points)
-            elif hors == 'S':
-                break
-            
-            else:
-                print('Invalid input, try again')
-                hors = 'H'
+        newcard = deck.deck[0]
+        self.calculate_points(newcard)
+        self.hand.append(newcard)
+        deck.deck.pop(0)
+        print('Your new card is', newcard, 'Your new score is', player.points)
 
 class Dealer(Player):
     def __init__(self, dealer_hand= [], hand=[], points= 0, ):
@@ -116,6 +106,14 @@ def main():
             print(dealer.dealer_hand, 'Dealer points: ', dealer.points)
             print(player.hand, 'Your points ', player.points)
 
+            hors = input('Would you like to hit or stand? (H/S)')
+            if hors == 'H':
+                player.hit()
+            elif hors == 'S':
+                pass
+            else:
+                print('Syntax error: improper input.  Use H or S for input.')
+
             if player.points == 21:
                 print('You win!')
                 player.hand = []
@@ -130,6 +128,7 @@ def main():
                 player.points = 0
                 dealer.points = 0
                 hitphase = False
+            
         
         print('Dealers turn!')
             
