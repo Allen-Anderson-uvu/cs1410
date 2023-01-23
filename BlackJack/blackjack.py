@@ -79,8 +79,6 @@ player = Player()
 
 def main():
     hitphase = False
-    global dealerphase
-    dealerphase = False
 
     while True:
         dealer.drawdealerhand()
@@ -119,6 +117,7 @@ def main():
                 player.points = 0
                 dealer.points = 0
                 hitphase = False
+                main()
             elif player.points > 21:
                 print('Bust!  You lose!')
                 player.hand = []
@@ -126,13 +125,49 @@ def main():
                 player.points = 0
                 dealer.points = 0
                 hitphase = False
+                main()
             
         print("Dealer's turn")
         while dealer.points < 17:
             dealer.dealerhit()
             print(dealer.points)
             time.sleep(2)
+
+        if dealer.points == 21:
+            print('Dealer wins!')
+            dealer.dealer_hand = []
+            player.hand = []
+            player.points = 0
+            dealer.points = 0
+
+        elif dealer.points > 21:
+            print('Dealer busts!  You win!')
+            dealer.dealer_hand = []
+            player.hand = []
+            player.points = 0
+            dealer.points = 0
             
+            
+        elif dealer.points > player.points:
+            print('Dealer wins!')
+            dealer.dealer_hand = []
+            player.hand = []
+            player.points = 0
+            dealer.points = 0
+            
+        elif player.points > dealer.points:
+            print('Player wins!')
+            player.hand = []
+            dealer.dealer_hand = []
+            player.points = 0
+            dealer.points = 0
+            
+        elif player.points == dealer.points:
+            print("It's a push!  No winner!")
+            dealer.dealer_hand = []
+            player.hand = []
+            player.points = 0
+            dealer.points = 0
 
 if __name__ == "__main__":
     main()
