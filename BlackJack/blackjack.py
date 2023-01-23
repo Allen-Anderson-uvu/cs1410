@@ -130,6 +130,8 @@ def main():
                 player.points = 0
                 dealer.points = 0
                 hitphase = False
+        
+        print('Dealers turn!')
             
 
 if __name__ == "__main__":
