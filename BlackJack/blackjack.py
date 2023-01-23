@@ -92,6 +92,7 @@ player = Player()
 
 def main():
     hitphase = False
+    acecount = 0
 
     while True:
         if len(deck.deck) < 4:
@@ -126,10 +127,18 @@ def main():
             if hors == 'H':
                 player.hit()
             elif hors == 'S':
-                print(hors)
                 break
             else:
                 print('Syntax error: improper input.  Use H or S for input.')
+            
+            if player.points > 21:
+                for ace in player.hand:
+                    if 'A' in ace:
+                        acecount+= 1
+                while player.points > 21:
+                    while acecount > 0:
+                        acecount-= 10
+
 
             if player.points == 21:
                 print('You win!')
