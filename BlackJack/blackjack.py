@@ -80,13 +80,18 @@ player = Player()
 def main():
     hitphase = False
 
+    if len(deck.deck) < 4:
+        print('Not enough cards to continue playing. Dealer will draw a new deck and shuffle it.')
+        newdeck = Deck()
+        newdeck.shuffle()
+
     while True:
         dealer.drawdealerhand()
         player.draw_hand()
         print(dealer.dealer_hand, 'Dealer points: ', dealer.points)
         print(player.hand, 'Your points: ', player.points)
         if player.points == 21:
-            print('You win!')
+            print('Black Jack! You win!')
             player.hand = []
             dealer.dealer_hand = []
             player.points = 0
@@ -96,7 +101,8 @@ def main():
             dealer.dealer_hand = []
             player.points = 0
             dealer.points = 0
-            print('Dealer wins!')
+            print('Black Jack! Dealer wins!')
+            main()
         else:
             hitphase = True
 
