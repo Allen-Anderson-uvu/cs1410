@@ -8,6 +8,7 @@ class Card():
     def __init__(self, suit, value):
         self.suit = suit
         self.value = value
+        
 
 class Deck:
     def __init__(self):
@@ -20,9 +21,10 @@ class Deck:
         random.shuffle(self.deck)
 
 class Player:
-    def __init__(self, hand=[], points= 0):
+    def __init__(self, hand=[], points= 0, aces=0):
         self.hand = hand
         self.points = points
+        self.aces = aces
 
     def calculate_points(self, newcard):
         if newcard[0] in ['1', '2', '3', '4', '5','6','7', '8', '9', '10']:
@@ -37,28 +39,37 @@ class Player:
         newcard = deck.deck[0]
         self.calculate_points(newcard)
         self.hand.append(newcard)
+
+        if newcard[0] == 'A':
+            self.aces += 1
         deck.deck.pop(0)
         newcard = deck.deck[0]
         self.calculate_points(newcard)
         self.hand.append(newcard)
+        if newcard[0] == 'A':
+            self.aces += 1
         deck.deck.pop(0)
     
     def hit(self):
         newcard = deck.deck[0]
         self.calculate_points(newcard)
         self.hand.append(newcard)
+        if newcard[0] == 'A':
+            self.aces += 1
         deck.deck.pop(0)
         print('Your new card is', newcard, 'Your new score is', player.points)
 
 class Dealer(Player):
     def __init__(self, dealer_hand= [], hand=[], points= 0, hiddenscore= 0, hiddendealerhand = []):
-        super().__init__(hand=[], points= 0)
+        super().__init__(hand=[], points= 0, aces= 0)
         self.dealer_hand = dealer_hand
         self.hiddenscore = hiddenscore
         self.hiddendealerhand = hiddendealerhand
 
     def drawdealerhand(self):
         newcard = deck.deck[0]
+        if newcard[0] == 'A':
+            self.aces += 1      
         self.hiddendealerhand.append(newcard)
         self.hiddendealerhand.append('?')
         self.calculatehiddenpoints(newcard)
@@ -66,6 +77,8 @@ class Dealer(Player):
         self.dealer_hand.append(newcard)
         deck.deck.pop(0)
         newcard = deck.deck[0]
+        if newcard[0] == 'A':
+            self.aces += 1
         self.calculate_points(newcard)
         self.dealer_hand.append(newcard)
         deck.deck.pop(0)
@@ -80,6 +93,8 @@ class Dealer(Player):
 
     def dealerhit(self):
         newcard = deck.deck[0]
+        if newcard[0] == 'A':
+            self.aces += 1
         self.calculate_points(newcard)
         self.dealer_hand.append(newcard)
         deck.deck.pop(0)
@@ -131,14 +146,11 @@ def main():
             else:
                 print('Syntax error: improper input.  Use H or S for input.')
             
-            if player.points > 21:
-                for ace in player.hand:
-                    if 'A' in ace:
-                        acecount+= 1
-                while player.points > 21:
-                    while acecount > 0:
-                        acecount-= 10
 
+            if player.points > 21:
+                if player.aces > 0:
+                    player.points -= 10
+                    player.aces -= 1
 
             if player.points == 21:
                 print('You win!')
@@ -173,6 +185,11 @@ def main():
             dealer.dealerhit()
             print(dealer.points)
             time.sleep(2)
+
+        if dealer.points > 21:
+            if dealer.aces > 0:
+                dealer.points -= 10
+                dealer.aces -= 1
 
         if dealer.points == 21:
             print('Dealer wins!')
