@@ -100,6 +100,21 @@ class Dealer(Player):
         deck.deck.pop(0)
         print(newcard)
 
+def splitcard(mytup):
+    b = ''
+    c = ''
+    counter = 0
+    rawdata = [('Spades', 'A')]
+    for a in rawdata:
+        for aa in a:
+            if counter == 0:
+                b = aa
+                counter += 1
+            else:
+                c = aa
+    return b, c
+
+
 deck = Deck()
 deck.shuffle()
 dealer = Dealer()
