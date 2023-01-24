@@ -43,6 +43,7 @@ class Player:
         if newcard[0] == 'A':
             self.aces += 1
         deck.deck.pop(0)
+
         newcard = deck.deck[0]
         self.calculate_points(newcard)
         self.hand.append(newcard)
@@ -100,19 +101,54 @@ class Dealer(Player):
         deck.deck.pop(0)
         print(newcard)
 
+class Hand():
+    def __init__(self, suit, number, mycard='', cardlist=''):
+        self.suit = suit
+        self.number = number
+        self.mycard = mycard
+        self.cardlist = cardlist
+    
+    def generate_card(self):
+
+        if self.suit == 'Clubs':
+            self.suit = '\u2667'
+        elif self.suit == 'Hearts':
+            self.suit = '\u2661'
+        elif self.suit == 'Spades':
+            self.suit = '\u2664'
+        else:
+            self.suit = '\u2662'
+
+        self.mycard = f'''\
+        .-------.
+        |{self.number}      |
+        |       |
+        |   {self.suit}   |
+        |       |
+        |      {self.number}|
+        `-------´
+        '''.format(self.number, self.suit)
+
+
 def splitcard(mytup):
     b = ''
     c = ''
     counter = 0
-    rawdata = [('Spades', 'A')]
-    for a in rawdata:
-        for aa in a:
-            if counter == 0:
-                b = aa
-                counter += 1
-            else:
-                c = aa
-    return b, c
+    for a in mytup:
+        if counter == 0:
+            b = a
+            counter += 1
+        else:
+            c = a
+        
+    return c, b
+
+def asciicards(a,b):
+    spacing = ' ' * 5
+    cards = a, b
+
+    for pieces in zip(*(card.splitlines() for card in cards)):
+        print(spacing.join(pieces))
 
 
 deck = Deck()
@@ -130,8 +166,40 @@ def main():
             break
         dealer.drawdealerhand()
         player.draw_hand()
-        print(dealer.hiddendealerhand, 'Dealer points: ', dealer.hiddenscore)
-        print(player.hand, 'Your points: ', player.points)
+        a,b = player.hand[0],player.hand[1]
+        suit, number = splitcard(a)
+        myhand = Hand(suit, number)
+        myhand.generate_card()
+        card1 = myhand.mycard
+        suit, number = splitcard(b)
+        myhand1 = Hand(suit, number)
+        myhand1.generate_card()
+        card2 = myhand1.mycard
+        print('Your hand: ')
+        print('****************************************************')
+        asciicards(card1,card2)
+        print('Your points: ', player.points)
+        print('****************************************************')
+        a, b = dealer.dealer_hand[0], dealer.dealer_hand[1]
+        suit, number = splitcard(a)
+        dealerhand = Hand(suit, number)
+        dealerhand.generate_card()
+        suit, number = splitcard(b)
+        dealerhand2 = Hand(suit, number)
+        dealerhand2.generate_card()
+        c = '''
+        ?????????
+        ?????????
+        ?????????
+        ?????????
+        ?????????
+        ?????????
+        '''
+        print('Dealer known cards:')
+        print('****************************************************')
+        asciicards(dealerhand.mycard, c)
+        print('Known dealer points:', dealer.hiddenscore)
+
         if player.points == 21:
             print('Black Jack! You win!')
             player.hand = []
@@ -156,10 +224,20 @@ def main():
             hors = input('Would you like to hit or stand? (H/S)')
             if hors == 'H':
                 player.hit()
+                newcard = player.hand[-1]
+                print(newcard)
+                suit, number = splitcard(newcard)
+                print(suit, number)
+                hitcard = Hand(suit, number)
+                print(hitcard)
+                newcard = hitcard.generate_card
+                print(hitcard.mycard)
+
             elif hors == 'S':
                 break
             else:
                 print('Syntax error: improper input.  Use H or S for input.')
+
             
 
             if player.points > 21:
@@ -195,6 +273,7 @@ def main():
         dealer.hiddendealerhand = []
         print('Dealers cards', dealer.dealer_hand, 'Dealer points', dealer.points)
         time.sleep(2)
+
         while dealer.points < 17:
             print('Dealer hits!')
             dealer.dealerhit()
